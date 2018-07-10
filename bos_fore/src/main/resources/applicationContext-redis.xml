@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 创建PoolConfig对象：连接池配置对象,用于配置连接池参数-->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+    	<!-- 最小空闲数 -->
+    	<property name="minIdle" value="5"/>
+    	<!-- 最大空闲数 -->
+		<property name="maxIdle" value="7"/>
+		<!-- 最大连接数 -->
+		<property name="maxTotal" value="20"/>
+    </bean>
+
+	<!-- 创建ConnectionFactory：连接工厂，用于连接redis -->
+	<bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		<!-- 主机 -->
+		<property name="hostName" value="localhost"/>
+		<!-- 端口 -->
+		<property name="port" value="6379"/>
+		<!-- 数据库索引，默认0 -->
+		<property name="database" value="2"/>
+		<!-- 配置连接池配置对象 -->
+		<property name="poolConfig" ref="poolConfig"/>
+	</bean>
+
+	<!-- 创建RedisTemplate：Redis模板对象 ***-->
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<!-- 配置连接工厂 -->
+		<property name="connectionFactory" ref="connectionFactory"/>
+		<!-- redis序列化机制 -->
+		<property name="keySerializer">
+			<bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+		</property>
+		<property name="valueSerializer">
+			<bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+		</property>
+	</bean>
+</beans>
